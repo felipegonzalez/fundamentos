@@ -52,20 +52,7 @@ library(tidyverse)
 library(patchwork)
 source("R/funciones_auxiliares.R")
 # usamos los datos tips del paquete reshape2
-tips <- reshape2::tips
-# renombramos variables y niveles
-propinas <- tips %>%
-  rename(cuenta_total = total_bill,
-         propina = tip, sexo = sex,
-         fumador = smoker,
-         dia = day, momento = time,
-         num_personas = size) %>%
-  mutate(sexo = recode(sexo, Female = "Mujer", Male = "Hombre"),
-         fumador = recode(fumador, No = "No", Yes = "Si"),
-         dia = recode(dia, Sun = "Dom", Sat = "Sab", Thur = "Jue", Fri = "Vie"),
-         momento = recode(momento, Dinner = "Cena", Lunch = "Comida")) %>%
-  select(-sexo) %>%
-  mutate(dia  = fct_relevel(dia, c("Jue", "Vie", "Sab", "Dom")))
+propinas <- read_csv("./data/propinas.csv")
 ```
 
 Y vemos una muestra
