@@ -386,7 +386,7 @@ text(3400,70000,"Proportion\n below\n 2910 gms\n = 11%",cex=0.75)
 ```
 
 Entonces, podemos pensar en la población como un conjunto de individuos que provee
-la distirbución de probabilidad de una observación aleatoria. Esto será muy útil
+la distribución de probabilidad de una observación aleatoria. Esto será muy útil
 cuando lleguemos al momento de hacer *inferencia estadística.* Cuyo objetivo es
 poder hacer afirmaciones sobre las características como media, moda, o dispersión que
 en general no sabemos de antemano.
