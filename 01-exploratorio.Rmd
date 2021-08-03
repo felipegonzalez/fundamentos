@@ -86,20 +86,6 @@ Supongamos entonces que consideramos simplemente la variable de `cuenta_total`.
 Podemos comenzar por **ordenar los datos**, y ver cuáles datos están en los
 extremos y cuáles están en los lugares centrales:
 
-```{block, type='mathblock'}
-En general la colección de datos no está ordenada por sus valores. Esto es
-debido a que las observaciones en general se recopilan de manera *aleatoria*.
-Utilizamos la notación de $\sigma(n)$ para denotar un *reordenamiento* de los
-datos de tal forma
-\begin{align}
-  \{x_{\sigma(1)}, \ldots, x_{\sigma(N)}\},
-\end{align}
-y que satisface la siguiente serie de desigualdades
-\begin{align}
-  x_{\sigma(1)} \leq \ldots \leq x_{\sigma(N)}.
-\end{align}
-```
-
 
 ```{r}
 propinas <- propinas %>%
@@ -113,13 +99,13 @@ bind_rows(head(cuenta), tail(cuenta)) %>% formatear_tabla()
 También podemos graficar los datos en orden, interpolando valores consecutivos.
 
 ```{r, fig.width = 7, fig.height = 4, echo = FALSE}
-g_orden <- ggplot(cuenta, aes(y = orden_cuenta, x = cuenta_total)) +
+g_orden <- ggplot(cuenta, aes(y = cuenta_total, x = orden_cuenta)) +
   geom_point(colour = "red", alpha = 0.5) +
   labs(subtitle = "Cuenta total")
-g_cuantiles <- ggplot(cuenta, aes(y = f, x = cuenta_total)) +
+g_cuantiles <- ggplot(cuenta, aes(y = cuenta_total, x = f)) +
   geom_point(colour = "red", alpha = 0.5) +
   geom_line(alpha = 0.5) +
-  labs(subtitle = "")
+  labs(subtitle = "Cuantiles de cuenta total")
 g_orden + g_cuantiles
 ```
 
@@ -127,72 +113,15 @@ A esta función le llamamos la **función de cuantiles** para la variable
 `cuenta_total`. Nos sirve para comparar directamente los distintos valores que
 observamos los datos según el orden que ocupan.
 
-```{block, type='mathblock'}
-La función de cuantiles muestral esta definida por
-\begin{align}
-\hat{F}(x) = \frac1N \sum_{n = 1}^N 1\{x_n \leq x\},
-\end{align}
-donde la funcion indicadora está definida por
-\begin{align}
-1\{ x \leq t\} =
-    \begin{cases}
-      1,  \text{ si } x \leq t  \\
-      0,  \text{ en otro caso}
-    \end{cases}.
-\end{align}
-```
-
-```{block, type='mathblock'}
-**Observación:** la función de cuantiles definida arriba también es conocida como la *función de acumulación empírica*. Se puede encontrar la siguiente notación en la literatura
-\begin{align}
-\hat F(x) = F_N(x) = \text{Pr}_N(X \leq x),
-\end{align}
-asi como 
-\begin{align}
-\text{Pr}_N(X \geq x) = 1 - \hat F(x).
-\end{align}
-
-```
-
-
-```{block, type='mathblock'}
-**Observación:** Para  mediciones continuas y $0 \leq q \leq 1,$ el cuantil $q$ es el valor $x = x(q)$---esta notación sirve para definir $x$ como una función de $q$--- tal que 
-\begin{align}
-  \hat F(x) \geq q \quad \text{y} \quad 1 - \hat F(x) \geq 1- q
-\end{align}
-Es decir, $x$ acumula el $q$-\% de los casos.
-```
-
-```{block, type='mathblock'}
-**Observación:** Si $N  \times q$ no es un número entero, entonces el cuantil $q$ es único y es igual a la $\sigma(\lceil N q \rceil)-$ésima observación.
-
-Si  $N q$ es un número entero, entonces el cuantil $q$ no es único y es igual a cualquier $x$ tal que 
-\begin{align}
-x_{\sigma(N q)} \leq x \leq x_{\sigma(N q + 1)}.
-\end{align}
-```
-
-
-
-```{block, type='ejercicio'}
-  Para una medición de interés $x$ con posibles valores en el intervalo $[a, b]$.
-  Comprueba que $\hat F(a) = 0$ y $\hat F(b) = 1$ para cualquier colección de datos de tamaño $N.$
-```
-
-
-La gráfica anterior, también nos sirve para poder estudiar la **dispersión y
+En particular, podemos estudiar la **dispersión y
 valores centrales** de los datos observados. Por ejemplo, podemos notar que:
 
 - El **rango** de datos va de unos 3 dólares hasta 50 dólares
 - Los **valores centrales** ---del cuantil 0.25 al 0.75, por decir un ejemplo--- están
-entre unos 13 y 25 dólares
+entre unos 13 y 25 dólares. Estos dos cuantiles se llaman **cuartil inferior** y **cuartil
+superior** respectivamente
 - El cuantil 0.5 (o también conocido como **mediana**) está alrededor de 18 dólares.
 
-
-```{block, type='ejercicio'}
-  ¿Cómo definirías la mediana en términos de la función de cuantiles?
-  *Pista:* Considera los casos por separado para $N$ impar o par.
-```
 
 
 Éste último puede ser utilizado para dar un valor *central* de la distribución
@@ -214,6 +143,62 @@ valores observados, los cuantiles (el porcentaje de casos) aumenta rápidamente.
 
 - Cuando la pendiente es casi plana, quiere decir que los datos tienen más
 dispersión local o están más separados.
+
+
+
+
+
+
+```{block, type='mathblock'}
+El cuantil $f$, que denotamos por $q(f)$ es valor a lo largo
+de la escala de medición de los datos tal que aproximadamente una fracción $f$ de los datos son menor o igual a $q(f)$.
+```
+
+Hay varias maneras de definir esto con precisión (ver [@cleveland93]): 
+supongamos que queremos
+definir $q(f)$, y denotamos los datos ordenados como $x_{(1)}, x_{(2)}, \ldots, x_{(N)}$,
+de forma que $x_{(1)}$ es el dato más chico y $x_{(N)}$ es el dato más grande. Para
+cada $x_{(i)}$ definimos  
+$$f_i = i / N$$
+entonces definimos el cuantil $q(f_i)=x_{(i)}$. Para cualquier calcular
+$q(f)$ donde $f$ está entre $f_i$ y $f_{i+1}$ interpolamos linealmente 
+los valores correspondientes $x_{(i)}$ y $x_{(i-1)}$. 
+
+```{block, type='ejercicio'}
+  ¿Cómo definirías la mediana en términos de la función de cuantiles?
+  *Pista:* Considera los casos por separado para $N$ impar o par.
+```
+
+**Observación**: en la práctica, es más conveniente usar $f_i= \frac{i - 0.5}{N}$,
+pues más adelante queremos comparar con 
+distribuciones teóricas no tienen definido el cuantil 0 y el 1, pues tienen
+soporte en los números reales (como la distribución normal, por ejemplo).
+
+Asociada a la función de cuantiles también tenemos la **distribución acumulada
+empírica de los datos**, que es aproximadamente inversa de la función de $q$ de cuantiles, y 
+se define como:
+
+$$\hat{F}(x) = x_{(i)}$$
+si $x_{(i)} \leq x_{(i+1)}$. Nótese que $\hat{F}(q(f_i)) = i/N = f_i$ (demuéstralo).
+
+```{r}
+acum_cuenta <- ecdf(cuenta$cuenta_total)
+cuenta <- cuenta %>% 
+  mutate(dea_cuenta_total = acum_cuenta(cuenta_total))
+g_acum <- ggplot(cuenta, aes(x = cuenta_total, y = dea_cuenta_total)) + geom_point() +
+  labs(subtitle = "Distribución acum empírica de cuenta total") + xlab("")
+g_cuantiles + g_acum
+```
+
+```{block, type='ejercicio'}
+  Para una medición de interés $x$ con posibles valores en el intervalo $[a, b]$.
+  Comprueba que $\hat F(a) = 0$ y $\hat F(b) = 1$ para cualquier colección de datos de tamaño $N.$
+```
+
+
+### Histogramas {-}
+
+
 
 En algunos casos, es más natural hacer un **histograma**, donde dividimos el rango
 de la variable en cubetas o intervalos (en este caso de igual longitud), y
@@ -241,10 +226,6 @@ g_1 <- ggplot(propinas, aes(sample = propina)) +
   geom_qq(distribution = stats::qunif) + xlab("f") + ylab("propina")
 g_1
 ```
-
-**Observación**. Cuando hay datos repetidos, los cuantiles tienen que interpretarse como sigue: 
-el cuantil-$f$ con valor $q$ satisface que existe una proporción aproximada $f$ de los datos que están en el valor
-$q$ o por debajo de éste, pero no necesariamente exactamente una proporción $f$ de los datos estan en $q$ o por debajo.
 
 
 Finalmente, una gráfica más compacta que resume la gráfica de cuantiles o el
@@ -304,12 +285,7 @@ Figura: [Jumanbar / CC BY-SA](https://creativecommons.org/licenses/by-sa/3.0)
 
 ::::::
 
-```{block, type='mathblock'}
-Hasta ahora hemos utilizado la definición general de *cuantiles*. Donde
-consideramos el cuantil $q$, para buscar $x$ tal que $\hat F(x) = q.$ Hay
-valores típicos de interés que corresponden a $q$ igual a 25\%, 50\% y 75\%.
-Éstos valores se denominan **cuartiles.**
-```
+
 
 **Ventajas en el análisis inicial**
 
@@ -320,7 +296,7 @@ La razón es que los cuantiles:
 - Son cantidades más fácilmente interpretables
 - Los cuantiles centrales son más resistentes a valores atípicos que medias o varianzas
 - Sin embargo, permite identificar valores extremos
-- Es fácil comparar cuantiles de distintos bonches de datos
+- Es fácil comparar cuantiles de distintos bonches de datos en la misma escala
 
 
 ### Media y desviación estándar {-}
@@ -352,8 +328,7 @@ La desviación estándar muestral se define como
 Sin embargo,
 
 - La media y desviación estándar son computacionalmente convenientes.
-- Para el trabajo de modelado estas medidas de resumen tienen ventajas claras
-(bajo ciertos supuestos teóricos).
+- Para el trabajo de modelado estas medidas de resumen tienen ventajas computacionales y teóricas
 - En muchas ocasiones conviene usar estas medidas pues permite hacer
 comparaciones históricas o tradicionales ---pues análisis anteriores pudieran
 estar basados en éstas.
