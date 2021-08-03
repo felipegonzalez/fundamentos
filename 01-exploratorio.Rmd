@@ -980,15 +980,11 @@ donde $x_k \in \{x_1, \ldots, x_N\}$.
 ```
 
 
-```{block, type = 'mathblock'}
 **Observación:** Notemos que el ajuste tradicional por medio de mínimos cuadrados considera un ajuste *global*
 con pesos uniformes
-\begin{align}
-w_n(x) = \frac1N.
-\end{align}
-```
+$$w_n(x) = \frac1N.$$
 
-```{block, type = 'mathblock'}
+
 **Interpretación:** En la práctica, los pesos $w_n(\cdot)$ contienen a su vez un conjunto de parámetros
 que dictan el comportamiento del ajuste local. Si por ejemplo tomamos en cuenta
 pesos Gaussianos
@@ -997,16 +993,8 @@ w_n(x) = \text{exp}\left( -\frac{ (x - x_n)^2 }{2\sigma^2} \right),
 \end{align}
 el parámetro $\sigma$ dicta el efecto local de los puntos ancla $x_n$. Dicho de otro
 modo, dicta la vecindad de incidencia de los datos $x_n.$
-```
 
-```{block, type = 'mathblock'}
-**Regresión polinomial:** Una generalización sencilla es considerar polinomios para el ajuste
-\begin{align}
-f_p(x) = b + a_1 x + \cdots + a_p x ^p,
-\end{align}
-donde $p$ es el máximo grado del polinomio. De esta forma, $p$ controla el suavizamiento
-de la curva. El caso de recta lineal claramente es para $p=1.$
-```
+
 
 
 ### Ajustando curvas `loess` {-}
