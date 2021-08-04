@@ -22,7 +22,7 @@ theme_set(theme_minimal())
 
 El estándar científico para contestar preguntas o tomar decisiones es uno que se
 basa en el análisis de datos. Es decir, en primer lugar se deben reunir todos
-los datos disponibles que puedan contener o sugerir alguna guía para entender
+los datos que puedan contener o sugerir alguna guía para entender
 mejor la pregunta o la decisión a la que nos enfrentamos. Esta recopilación de
 datos ---que pueden ser cualitativos, cuantitativos, o una mezcla de los dos---
 debe entonces ser analizada para extraer información relevante para nuestro
@@ -111,18 +111,27 @@ g_orden + g_cuantiles
 
 A esta función le llamamos la **función de cuantiles** para la variable
 `cuenta_total`. Nos sirve para comparar directamente los distintos valores que
-observamos los datos según el orden que ocupan.
-
-En particular, podemos estudiar la **dispersión y
-valores centrales** de los datos observados. Por ejemplo, podemos notar que:
+observamos los datos según el orden que ocupan. En particular, podemos estudiar la **dispersión y
+valores centrales** de los datos observados:
 
 - El **rango** de datos va de unos 3 dólares hasta 50 dólares
+- Los **valores centrales**, por ejemplo el 50% de los valores más centrales, están
+entre unos 13 y 25 dólares. 
+- El valor que divide en dos mitades iguales a los datos es de alrededor de 18 dólares.
+
+
+```{block, type='mathblock'}
+El **cuantil** $f$, que denotamos por $q(f)$ es valor a lo largo
+de la escala de medición de los datos tal que aproximadamente una fracción $f$ de los datos 
+son menores o iguales a $q(f)$.
+```
+
+En nuestro ejemplo:
+
 - Los **valores centrales** ---del cuantil 0.25 al 0.75, por decir un ejemplo--- están
 entre unos 13 y 25 dólares. Estos dos cuantiles se llaman **cuartil inferior** y **cuartil
 superior** respectivamente
 - El cuantil 0.5 (o también conocido como **mediana**) está alrededor de 18 dólares.
-
-
 
 Éste último puede ser utilizado para dar un valor *central* de la distribución
 de valores para `cuenta_total`. Asimismo podemos dar resúmenes más refinados si
@@ -137,24 +146,17 @@ cambio) haciendo comparaciones en diferentes partes de la gráfica:
 - La distribución de valores tiene asimetría: el 10\% de las cuentas más altas
 tiene considerablemente más dispersión que el 10\% de las cuentas más bajas.
 
-- Entre los cuantiles 0.2 y 0.5 es donde existe *mayor* densidad de datos: la
+- Entre los cuantiles 0.2 y 0.7 es donde existe *mayor* densidad de datos: la
 pendiente (tasa de cambio) es alta, lo que significa que al avanzar en los
 valores observados, los cuantiles (el porcentaje de casos) aumenta rápidamente.
 
-- Cuando la pendiente es casi plana, quiere decir que los datos tienen más
+- Cuando la pendiente alta, quiere decir que los datos tienen más
 dispersión local o están más separados.
 
 
 
-
-
-
-```{block, type='mathblock'}
-El cuantil $f$, que denotamos por $q(f)$ es valor a lo largo
-de la escala de medición de los datos tal que aproximadamente una fracción $f$ de los datos son menor o igual a $q(f)$.
-```
-
-Hay varias maneras de definir esto con precisión (ver [@cleveland93]): 
+**Observación**: Hay varias maneras de definir los cuantiles  
+con precisión (ver [@cleveland93]): 
 supongamos que queremos
 definir $q(f)$, y denotamos los datos ordenados como $x_{(1)}, x_{(2)}, \ldots, x_{(N)}$,
 de forma que $x_{(1)}$ es el dato más chico y $x_{(N)}$ es el dato más grande. Para
@@ -164,22 +166,20 @@ entonces definimos el cuantil $q(f_i)=x_{(i)}$. Para cualquier calcular
 $q(f)$ donde $f$ está entre $f_i$ y $f_{i+1}$ interpolamos linealmente 
 los valores correspondientes $x_{(i)}$ y $x_{(i-1)}$. 
 
-```{block, type='ejercicio'}
-  ¿Cómo definirías la mediana en términos de la función de cuantiles?
-  *Pista:* Considera los casos por separado para $N$ impar o par.
-```
-
-**Observación**: en la práctica, es más conveniente usar $f_i= \frac{i - 0.5}{N}$,
+En la práctica, es más conveniente usar $f_i= \frac{i - 0.5}{N}$,
 pues más adelante queremos comparar con 
-distribuciones teóricas no tienen definido el cuantil 0 y el 1, pues tienen
+distribuciones teóricas que no tienen definido su cuantil 0 y el 1, pues tienen
 soporte en los números reales (como la distribución normal, por ejemplo).
+
+---
 
 Asociada a la función de cuantiles también tenemos la **distribución acumulada
 empírica de los datos**, que es aproximadamente inversa de la función de $q$ de cuantiles, y 
 se define como:
 
 $$\hat{F}(x) = x_{(i)}$$
-si $x_{(i)} \leq x_{(i+1)}$. Nótese que $\hat{F}(q(f_i)) = i/N = f_i$ (demuéstralo).
+si $x_{(i)} \leq x < x_{(i+1)}$. Nótese que $\hat{F}(q(f_i)) = i/N = f_i$ (demuéstralo).
+
 
 ```{r}
 acum_cuenta <- ecdf(cuenta$cuenta_total)
@@ -214,7 +214,6 @@ g_1 + g_2 + g_3
 
 Es una gráfica más popular, pero perdemos cierto nivel de detalle, y distintas
 particiones resaltan distintos aspectos de los datos.
-
 
 ```{block, type='ejercicio'}
 ¿Cómo se ve la gráfica de cuantiles de las propinas? ¿Cómo crees que esta gráfica se
@@ -295,7 +294,7 @@ La razón es que los cuantiles:
 
 - Son cantidades más fácilmente interpretables
 - Los cuantiles centrales son más resistentes a valores atípicos que medias o varianzas
-- Sin embargo, permite identificar valores extremos
+- Permiten identificar valores extremos
 - Es fácil comparar cuantiles de distintos bonches de datos en la misma escala
 
 
@@ -308,10 +307,11 @@ En general, no son muy apropiadas para iniciar el análisis exploratorio,
 pues:
 
 - Son medidas más difíciles de interpretar y explicar que los cuantiles. En este
-sentido, son medidas especializadas. Por ejemplo, intenta explicar
-intuitivamente qué es la media.
-- No son resistentes a valores atípicos o erróneos. Su falta de resistencia los
-vuelve poco útiles en las primeras etapas de limpieza y descripción.
+sentido, son medidas especializadas. Por ejemplo, compara una explicación
+intuitiva de la mediana contra una explicación intuitiva de la media.
+- No son resistentes a valores atípicos. Su falta de resistencia los
+vuelve poco útiles en las primeras etapas de limpieza y descripción y en resúmenes
+deficientes para distribuciones irregulares (con colas largas por ejemplo).
 
 ```{block, type='mathblock'}
 La media, o promedio, se denota por $\bar x$ y se define como
@@ -324,8 +324,11 @@ La desviación estándar muestral se define como
 \end{align}
 ```
 
+**Observación**: Si $N$ no es muy chica, no importa mucho si dividimos por $N$ o
+por $N-1$ en la fórmula de la desviación estándar. La razón de que típicamente se
+usa $N-1$ la veremos más adelante, en la parte de estimación.
 
-Sin embargo,
+Por otro lado, ventajas de estas medidas de centralidad y dispersión son:
 
 - La media y desviación estándar son computacionalmente convenientes.
 - Para el trabajo de modelado estas medidas de resumen tienen ventajas computacionales y teóricas
@@ -344,6 +347,7 @@ de lo que ya tenías precalculado $\bar x_N.$
 ```
 
 ## Ejemplos {-}
+
 
 ### Precios de casas {-}
 
@@ -419,29 +423,6 @@ casas %>%
   round()
 ```
 
-```{block, type='mathblock'}
-Tratar con datos por segmento es una situación común en aplicaciones. Usualmente
-denotamos por
-\begin{align}
-  x_{k, n}
-\end{align}
-a la $n$-ésima observación del $k$-ésimo grupo. Usualmente tenemos un universo
-de $K$ posibles grupos y para cada grupo tenemos un total diferente de
-observaciones. Esto lo denotamos por $N_k$, el número total de observaciones del
-grupo $k$ para cualquier $k = 1, \ldots, K.$ El número total de muestras lo
-denotamos por $N$, donde
-\begin{align}
-  N = \sum_{k=1}^K N_k.
-\end{align}
-Finalmente, nos puede interesar, como en el ejemplo, los promedios por grupo
-\begin{align}
-  \bar x_k = \frac{1}{N_k} \sum_{n = 1}^{N_k} x_{k, n},
-\end{align}
-y contrastar contra el promedio total
-\begin{align}
-  \bar x = \frac1K \sum_{k = 1}^K \bar x_k = \frac1K \sum_{k = 1}^K \left( \frac{1}{N_k} \sum_{n = 1}^{N_k} x_{k, n} \right).
-\end{align}
-```
 
 Por otro lado, las variaciones con respecto a las medianas **dentro** de cada
 zona, por grupo, se resume como:
@@ -568,14 +549,11 @@ Se puede discutir qué tan apropiada es cada gráfica con el objetivo de realiza
 comparaciones. Sin duda, graficar más cuantiles es más útil para hacer
 comparaciones. Por ejemplo, en la Gráfica 1 podemos ver que la mediana de las
 escuelas generales está cercana al cuantil 5\% de las escuelas particulares. Por
-otro lado, el diagrama de caja y brazos muestra también valores "atípicos". Es
-importante notar que una comparación más robusta se puede lograr por medio de
-**pruebas de hipótesis**, las cuales veremos mas adelante en el curso.
+otro lado, el diagrama de caja y brazos muestra también valores "atípicos".
 
-Regresando a nuestro análisis exploratorio, notemos que la diferencia es
-considerable entre tipos de escuela. Antes de contestar prematuramente la
+ Antes de contestar prematuramente la
 pregunta: ¿cuáles son las mejores escuelas? busquemos mejorar la
-interpretabilidad de nuestras comparaciones usando los principios 2 y 3.
+interpretabilidad de nuestras comparaciones.
 Podemos comenzar por agregar, por ejemplo, el nivel del marginación del
 municipio donde se encuentra la escuela.
 
@@ -894,7 +872,7 @@ de todas las posibles muestras que pudimos haber extraido.
 En las siguiente secciones discutiremos estos aspectos, en los cuales pasamos
 del trabajo de "detective" al trabajo de "juez" en nuestro trabajo analítico.
 
-## Loess {-}
+## Suavizamiento loess {-}
 
 Las gráficas de dispersión son la herramienta básica para describir la relación entre dos variables cuantitativas, y como vimos en ejemplo anteriores, muchas
 veces podemos apreciar mejor la relación entre ellas si agregamos una curva
@@ -912,94 +890,169 @@ indexadas). Graficamos en escalas logarítmicas y agregamos una curva `loess`.
 # cargamos los datos
 load(here::here("data", "ventas_sorteo.Rdata"))
 
-ggplot(ventas.sorteo, aes(x = log(premio), y = log(ventas.tot.1))) +
+ggplot(ventas.sorteo, aes(x = premio, y = ventas.tot.1)) +
   geom_point() +
-  geom_smooth(method = "loess", alpha = 0.5, degree = 1, se = FALSE)
+  geom_smooth(method = "loess", alpha = 0.5, degree = 1, se = FALSE) +
+  scale_x_log10(breaks = c(20000, 40000, 80000)) + 
+  scale_y_log10(breaks = c(10000, 15000, 22000, 33000)) 
 ```
 
 El patrón no era difícil de ver en los datos originales, sin embargo, la curva
 lo hace más claro, el logaritmo de las ventas tiene una relación no lineal con
 el logaritmo del premio: para premios no muy grandes no parece haber gran
-diferencia, pero cuando los premios empiezan a crecer por encima de 20,000
-(aproximadamente $e^{10}$), las ventas crecen más rápidamente que para premios
+diferencia, pero cuando los premios empiezan a crecer por encima de 20,000, 
+las ventas crecen más rápidamente que para premios
 menores. Este efecto se conoce como *bola de nieve*, y es frecuente en este
 tipo de loterías.
 
 Antes de adentrarnos a los modelos `loess` comenzamos explicando cómo se ajustan
-familias paramétricas de curvas a conjuntos de datos dados.
-
-```{block, type='mathblock'}
-
-**Ajustando familias paramétricas** El modelo de *regresion lineal* ajusta una recta
+familias paramétricas de curvas a conjuntos de datos dados. El modelo de *regresion lineal* 
+ajusta una recta
 a un conjunto de datos. Por ejemplo, consideremos la familia
-\begin{align}
-f_{a,b} = a x + b,
-\end{align}
+$$f_{a,b}(x) = a x + b$$,
 para un conjunto de datos bivariados $\{ (x_1, y_1), \ldots, (x_N, y_N)\}$. Buscamos
 encontrar $a$ y $b$ tales que $f_{a,b}$ de un ajuste *óptimo* a los datos. Para esto, se minimiza
 la suma de errores cuadráticos
-\begin{align}
-\frac1N \sum_{n = 1}^N ( y_n - a x_n - b)^2.
-\end{align}
-```
 
-**Observación:** Los modelos de regresión lineal, cuando se pueden ajustar de manera razonable, son altamente deseables por su simplicidad: los datos se describen con pocos parámetros y tenemos incrementos marginales constantes en todo el rango de la variable que juega como factor, de modo que la interpretación es simple. Por esta razón, muchas veces vale la pena transformar los datos con el fin de enderezar la relación de dos variables y poder ajustar una función lineal (lo veremos más adelante).
-
+$$\frac1N \sum_{n = 1}^N ( y_n - a x_n - b)^2.$$
 
 En este caso, las constantes $a$ y $b$ se pueden encontrar diferenciando la función de mínimos cuadrados. Nótese que podemos repetir el argumento con otras familias de funciones (por ejemplo cuadráticas).
 
 ```{r, fig.width=3.6, fig.height=3.3, fig.align ='center', warning = FALSE, message = FALSE}
-ggplot(ventas.sorteo, aes(x = log(premio), y = log(ventas.tot.1))) +
+ggplot(ventas.sorteo, aes(x = premio, y = ventas.tot.1)) +
   geom_point() +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm", alpha = 0.5, se = FALSE) +
+  scale_x_log10(breaks = c(20000, 40000, 80000)) + 
+  scale_y_log10(breaks = c(10000, 15000, 22000, 33000)) 
 ```
 
-Donde los parámetros $a$ y $b$ están dados por:
-
-```{r}
-mod_lineal <- lm(log(ventas.tot.1) ~ log(premio), data = ventas.sorteo)
-round(coef(mod_lineal), 2)
-```
-
-De modo que la curva ajustada es $\log(V) = 4.6 + 0.47 \log(P)$, o en las
-unidades originales $V = 100 P^{0.47}$, donde $V$ son las ventas y $P$ el
-premio. Si observamos la gráfica notamos que este modelo lineal (en los
+Si observamos la gráfica notamos que este modelo lineal (en los
 logaritmos) no es adecuado para estos datos. Podríamos experimentar con otras
 familias (por ejemplo, una cuadrática o cúbica, potencias, exponenciales, etc.);
 sin embargo, en la etapa exploratoria es mejor tomar una ruta de ajuste más
-flexibles (aún cuando esta no sea con funciones algebráicas), que al mismo
-tiempo sea robusto.
+flexible y robusta. Regresión local nos provee de un método con estas
+características:
 
 
-```{block, type = 'mathblock'}
-**Curvas loess (regresión local):** Una manera de mejorar la flexibilidad de los modelos lineales es considerar rectas de manera local. Esto lo logramos al minimizar una suma de errores cuadráticos ponderados por pesos $w_n(x)$. Para esto minimizamos las $N$ funciones de error
-\begin{align}
-\sum_{n = 1}^N w_n(x_k) ( y_n - a x_n - b)^2,
-\end{align}
-donde $x_k \in \{x_1, \ldots, x_N\}$.
+**Curvas loess (regresión local):** Una manera de mejorar la flexibilidad 
+de los modelos lineales es considerar rectas de manera local. Es decir, en cada
+$x$ posible consideramos cuál es la mejor recta que mejor ajusta a los datos,
+considerando solamente valores de $x_n$ que están cercanos a $x$.
+
+La siguiente gráfica muestra qué recta se ajusta alrededor de cada punto, y cómo
+queda el suavizador completo, con distintos valores de suavizamiento. EL tono
+de los puntos indican en cada paso cuánto peso se les da a cada valor:
+
+
+```{r binsmoother-animation, echo=FALSE, warning=FALSE, message=FALSE, fig.align='center'}
+library(gganimate)
+library(broom)
+ventas <- readr::read_csv(here::here("data", "ventas_semanal.csv"))
+
+if(!fs::file_exists(here::here("images", "02_loess-spans.gif"))){
+  # spans a considerar
+  spans <- c(.05, .10, .5, 1)
+
+  # crear ajustes loess, uno por span
+  fits <- crossing(ventas, span = spans) %>%
+    nest_by(span) %>%
+    mutate(
+      mod = list(loess(sales.kg ~ period, data = data, degree = 1,
+                            span = span)),
+      data_mod = list(augment(mod))
+           )
+
+  # calcular pesos
+  dat <- ventas %>%
+    tidyr::crossing(span = spans, center = unique(ventas$period)) %>%
+    mutate(dist = abs(period - center)) %>%
+    filter(rank(dist) / n() <= span) %>%
+    mutate(weight = (1 - (dist / max(dist)) ^ 3) ^ 3)
+
+  # Crear gráfica de páneles con puntos que se mueven, ajustes locales lineales,
+  # y líneas verticales
+  loess_spans <- ggplot(dat, aes(period, sales.kg)) +
+    geom_point(aes(alpha = weight)) +
+    transition_manual(center) +
+    geom_smooth(aes(group = center, frame = center, weight = weight),
+                method = "lm", se = FALSE) +
+    geom_vline(aes(xintercept = center, frame = center), lty = 2) +
+    geom_point(shape = 1, data = ventas, alpha = .25) +
+    geom_line(aes(y = .fitted, frame = period, cumulative = TRUE),
+              data = unnest(fits, cols = data_mod), color = "red") +
+    facet_wrap(~span, ncol = 1) +
+    ggtitle("Loess lineal")
+
+  loess_anim <- animate(loess_spans, nframes = 150)
+  anim_save(here::here("images", "02_loess-spans.gif"), loess_anim)
+}
+
+knitr::include_graphics(here::here("images", "02_loess-spans.gif"))
+```
+
+**Escogiendo de los parámetros.** El paráemtro de suavizamiento se
+encuentra por ensayo y error. La idea general es que debemos encontrar una
+curva que explique patrones importantes en los datos (que *ajuste* los datos)
+pero que no muestre variaciones a escalas más chicas difíciles de explicar (que
+pueden ser el resultado de influencias de otras variables, variación muestral,
+ruido o errores de redondeo, por ejemplo). En el proceso de prueba y error
+iteramos el ajuste y en cada paso hacemos análisis de residuales, con el fin
+de seleccionar un suavizamiento adecuado.
+
+En lugar de usar ajustes locales lineales, podemos usar ajustes locales cuadráticos
+que nos permite capturar formas locales cuadráticas sin tener que suavizar demasiado
+poco:
+
+```{r binsmoother-animation-cuad, echo=FALSE, warning=FALSE, message=FALSE, fig.align='center'}
+library(gganimate)
+library(broom)
+ventas <- readr::read_csv(here::here("data", "ventas_semanal.csv"))
+
+if(!fs::file_exists(here::here("images", "02_loess-spans-cuad.gif"))){
+  # spans a considerar
+  spans <- c(.05, .10, .5, 1)
+
+  # crear ajustes loess, uno por span
+  fits <- crossing(ventas, span = spans) %>%
+    nest_by(span) %>%
+    mutate(
+      mod = list(loess(sales.kg ~ period, data = data, degree = 2,
+                            span = span)),
+      data_mod = list(augment(mod))
+           )
+
+  # calcular pesos
+  dat <- ventas %>%
+    tidyr::crossing(span = spans, center = unique(ventas$period)) %>%
+    mutate(dist = abs(period - center)) %>%
+    filter(rank(dist) / n() <= span) %>%
+    mutate(weight = (1 - (dist / max(dist)) ^ 3) ^ 3)
+
+  # Crear gráfica de páneles con puntos que se mueven, ajustes locales lineales,
+  # y líneas verticales
+  loess_spans <- ggplot(dat, aes(period, sales.kg)) +
+    geom_point(aes(alpha = weight)) +
+    transition_manual(center) +
+    geom_smooth(aes(group = center, frame = center, weight = weight),
+                method = "lm", formula = y ~ poly(x, degree = 2), se = FALSE) +
+    geom_vline(aes(xintercept = center, frame = center), lty = 2) +
+    geom_point(shape = 1, data = ventas, alpha = .25) +
+    geom_line(aes(y = .fitted, frame = period, cumulative = TRUE),
+              data = unnest(fits, cols = data_mod), color = "red") +
+    facet_wrap(~span, ncol = 1) +
+    ggtitle("Loess cuadrático")
+
+  loess_anim <- animate(loess_spans, nframes = 150)
+  anim_save(here::here("images", "02_loess-spans-cuad.gif"), loess_anim)
+}
+
+knitr::include_graphics(here::here("images", "02_loess-spans-cuad.gif"))
 ```
 
 
-**Observación:** Notemos que el ajuste tradicional por medio de mínimos cuadrados considera un ajuste *global*
-con pesos uniformes
-$$w_n(x) = \frac1N.$$
+### Opcional: cálculo del suavizador {-}
 
-
-**Interpretación:** En la práctica, los pesos $w_n(\cdot)$ contienen a su vez un conjunto de parámetros
-que dictan el comportamiento del ajuste local. Si por ejemplo tomamos en cuenta
-pesos Gaussianos
-\begin{align}
-w_n(x) = \text{exp}\left( -\frac{ (x - x_n)^2 }{2\sigma^2} \right),
-\end{align}
-el parámetro $\sigma$ dicta el efecto local de los puntos ancla $x_n$. Dicho de otro
-modo, dicta la vecindad de incidencia de los datos $x_n.$
-
-
-
-
-### Ajustando curvas `loess` {-}
-
-La idea es producir ajustes locales de rectas o funciones cuadráticas. Consideremos especificar dos parámetros:
+La idea es producir ajustes locales de rectas o funciones lineales o cuadráticas. Consideremos especificar dos parámetros:
 
 * Parámetro de suavizamiento $\alpha$: cuando $\alpha$ es más grande, la curva
 ajustada es más suave.
@@ -1050,7 +1103,7 @@ curve(tricubo, from = -1.5, to = 1.5)
 
 Finalmente, para cada valor de $x_k$ que está en el conjunto de datos
 $\{x_1,...,x_n\}$, ajustamos una recta de mínimos cuadrados ponderados por los pesos
-$w_n(x)$, es decir, minimizamos
+$w_n(x)$, es decir, minimizamos (en el caso lineal):
 
 $$\sum_{i=1}^nw_n(x_k)(y_i-ax_n-b)^2.$$
 
@@ -1066,64 +1119,15 @@ teóricas adicionales que tiene en la inferencia.
 donde usamos funciones cuadráticas, y obtendríamos entonces tres familias de parámetros
 $a(x_k), b_1(x_k), b_2(x_k),$ para cada $k \in \{1, \ldots, N\}$.
 
-**Escogiendo de los parámetros.** Los parámetros $\alpha$ y $\lambda$ se
-encuentran por ensayo y error. La idea general es que debemos encontrar una
-curva que explique patrones importantes en los datos (que *ajuste* los datos)
-pero que no muestre variaciones a escalas más chicas difíciles de explicar (que
-pueden ser el resultado de influencias de otras variables, variación muestral,
-ruido o errores de redondeo, por ejemplo). En el proceso de prueba y error
-iteramos el ajuste y en cada paso hacemos análisis de residuales, con el fin
-de seleccionar un suavizamiento adecuado.
 
-Ejemplo de distintas selecciones de $\lambda$, en este ejemplo consideramos la
-ventas semanales de un producto a lo largo de 5 años.
 
-<!-- ```{r binsmoother-animation, echo=FALSE, warning=FALSE, message=FALSE, fig.align='center'}  -->
-<!-- library(gganimate) -->
-<!-- library(broom) -->
-<!-- ventas <- readr::read_csv(here::here("data", "ventas_semanal.csv")) -->
 
-<!-- if(!fs::file_exists(here::here("images", "02_loess-spans.gif"))){ -->
-<!--   # spans a considerar -->
-<!--   spans <- c(.06, .10, .5, 1) -->
 
-<!--   # crear ajustes loess, uno por span -->
-<!--   fits <- crossing(ventas, span = spans) %>% -->
-<!--     nest_by(span) %>% -->
-<!--     mutate( -->
-<!--       mod = list(loess(sales.kg ~ period, data = data, degree = 1,  -->
-<!--                             span = span)),  -->
-<!--       data_mod = list(augment(mod)) -->
-<!--            ) -->
 
-<!--   # calcular pesos -->
-<!--   dat <- ventas %>% -->
-<!--     tidyr::crossing(span = spans, center = unique(ventas$period)) %>% -->
-<!--     mutate(dist = abs(period - center)) %>% -->
-<!--     filter(rank(dist) / n() <= span) %>% -->
-<!--     mutate(weight = (1 - (dist / max(dist)) ^ 3) ^ 3) -->
 
-<!--   # Crear gráfica de páneles con puntos que se mueven, ajustes locales lineales,  -->
-<!--   # y líneas verticales -->
-<!--   loess_spans <- ggplot(dat, aes(period, sales.kg)) + -->
-<!--     geom_point(aes(alpha = weight, frame = center)) + -->
-<!--     geom_smooth(aes(group = center, frame = center, weight = weight), -->
-<!--                 method = "lm", se = FALSE) + -->
-<!--     geom_vline(aes(xintercept = center, frame = center), lty = 2) + -->
-<!--     geom_point(shape = 1, data = ventas, alpha = .25) + -->
-<!--     geom_line(aes(y = .fitted, frame = period, cumulative = TRUE),  -->
-<!--               data = unnest(fits, cols = data_mod), color = "red") + -->
-<!--     facet_wrap(~span, ncol = 1) + -->
-<!--     ggtitle("x0 = ") -->
 
-<!--   gganimate(loess_spans, filename = here::here("images", "02_loess-spans.gif"), -->
-<!--             interval= .1) -->
-<!-- } -->
 
-<!-- knitr::include_graphics(here::here("images", "02_loess-spans.gif")) -->
-<!-- ``` -->
-
-### Series de tiempo {-}
+## Caso de estudio: nacimientos en México {-}
 
 Podemos usar el suavizamiento `loess` para entender y describir el comportamiento
 de series de tiempo, en las cuáles intentamos entender la dependencia de una
@@ -1132,10 +1136,6 @@ distintas componentes para describir exitosamente una serie de tiempo, y para
 esto usamos distintos tipos de suavizamientos. Veremos que distintas componentes
 varían en distintas escalas de tiempo (unas muy lentas, cono la tendencia, otras
 más rapidamente, como variación quincenal, etc.).
-
-
-
-## Caso de estudio: nacimientos en México {-}
 
 Este caso de estudio esta basado en un análisis propuesto por [A. Vehtari y A. Gelman](https://statmodeling.stat.columbia.edu/2016/05/18/birthday-analysis-friday-the-13th-update/),
 junto con un análisis de serie de tiempo de @cleveland93.
